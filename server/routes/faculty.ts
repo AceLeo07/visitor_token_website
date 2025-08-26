@@ -139,8 +139,16 @@ export const approveTokenRequest: RequestHandler = async (req, res) => {
 
     // Generate token
     const tokenCode = generateTokenCode();
-    const qrCodeData = generateQRCodeData(tokenCode);
     const expiresAt = calculateTokenExpiry(new Date(request.visitDate));
+
+    const tokenData = {
+      tokenCode,
+      visitor: request.visitor,
+      faculty: request.faculty,
+      expiresAt
+    };
+
+    const qrCodeData = generateQRCodeData(tokenCode, tokenData);
 
     const token = db.createToken({
       tokenCode,
@@ -306,7 +314,15 @@ export const generateDirectToken: RequestHandler = async (req, res) => {
 
     // Generate token
     const tokenCode = generateTokenCode();
-    const qrCodeData = generateQRCodeData(tokenCode);
+
+    const tokenData = {
+      tokenCode,
+      visitor,
+      faculty: db.getFacultyById(facultyId),
+      expiresAt: expiryDateTime
+    };
+
+    const qrCodeData = generateQRCodeData(tokenCode, tokenData);
 
     const token = db.createToken({
       tokenCode,

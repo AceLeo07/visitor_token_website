@@ -8,8 +8,13 @@ export function generateTokenCode(): string {
   return `${prefix}-${timestamp}-${random}`;
 }
 
+import { qrService } from './qrService';
+
 // Generate QR code data (URL that can be scanned)
-export function generateQRCodeData(tokenCode: string): string {
+export function generateQRCodeData(tokenCode: string, tokenData?: any): string {
+  if (tokenData) {
+    return qrService.createSecureQRCode(tokenData);
+  }
   const baseUrl = process.env.BASE_URL || 'https://visitor.mitadt.edu.in';
   return `${baseUrl}/verify/${tokenCode}`;
 }

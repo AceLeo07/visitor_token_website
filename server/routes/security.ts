@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import { db } from "../database";
 import { isTokenValid } from "../utils";
+import { qrService } from "../qrService";
 import { TokenVerificationRequest, VerificationResponse } from "@shared/types";
 
 // Verify Token (QR Code or Manual)
@@ -22,11 +23,31 @@ export const verifyToken: RequestHandler = async (req, res) => {
     let method: 'qr' | 'manual' = 'manual';
 
     if (qrData) {
-      // Extract token code from QR data URL
-      const urlMatch = qrData.match(/\/verify\/(.+)$/);
-      if (urlMatch) {
-        token = db.getTokenByCode(urlMatch[1]);
-        method = 'qr';
+      method = 'qr';
+
+      // Validate and extract token code from QR data
+      const qrValidation = qrService.validateQRCode(qrData);
+
+      if (qrValidation.valid && qrValidation.tokenCode) {
+        token = db.getTokenByCode(qrValidation.tokenCode);
+
+        // Log QR validation success
+        console.log(`QR Code validated: ${qrValidation.tokenCode}`);
+      } else {
+        // Log QR validation failure
+        db.createSecurityLog({
+          tokenId: '',
+          securityId,
+          action: 'rejected',
+          method: 'qr',
+          notes: `Invalid QR code: ${qrValidation.error}`
+        });
+
+        return res.status(400).json({
+          success: false,
+          valid: false,
+          message: `Invalid QR code: ${qrValidation.error}`
+        } as VerificationResponse);
       }
     } else if (tokenCode) {
       token = db.getTokenByCode(tokenCode);
