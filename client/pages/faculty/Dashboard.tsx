@@ -24,6 +24,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import TokenGeneration from "@/components/faculty/TokenGeneration";
+import Reports from "@/components/faculty/Reports";
 
 interface FacultyInfo {
   id: string;
@@ -418,23 +419,7 @@ export default function FacultyDashboard() {
 
           {/* Reports Tab */}
           <TabsContent value="reports">
-            <Card>
-              <CardHeader>
-                <CardTitle>Reports & Analytics</CardTitle>
-                <CardDescription>
-                  View detailed reports with filters and export options
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8 text-gray-500">
-                  <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>Reports interface will be implemented here</p>
-                  <Button className="mt-4" onClick={() => setActiveTab("dashboard")}>
-                    Back to Dashboard
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <Reports />
           </TabsContent>
         </Tabs>
       </main>
