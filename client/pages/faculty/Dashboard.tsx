@@ -3,12 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  BarChart3, 
-  Users, 
-  CheckCircle, 
-  XCircle, 
-  Clock, 
+import {
+  BarChart3,
+  Users,
+  CheckCircle,
+  XCircle,
+  Clock,
   QrCode,
   FileText,
   LogOut,
@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import TokenGeneration from "@/components/faculty/TokenGeneration";
 
 interface FacultyInfo {
   id: string;
@@ -412,23 +413,7 @@ export default function FacultyDashboard() {
 
           {/* Token Generation Tab */}
           <TabsContent value="token-generation">
-            <Card>
-              <CardHeader>
-                <CardTitle>Direct Token Generation</CardTitle>
-                <CardDescription>
-                  Generate tokens directly without waiting for visitor requests
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8 text-gray-500">
-                  <QrCode className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>Token generation form will be implemented here</p>
-                  <Button className="mt-4" onClick={() => setActiveTab("dashboard")}>
-                    Back to Dashboard
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <TokenGeneration />
           </TabsContent>
 
           {/* Reports Tab */}
