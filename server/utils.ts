@@ -61,16 +61,11 @@ export function calculateTokenExpiry(visitDate: Date): Date {
   return expiry;
 }
 
-// Simulate email sending (In production, use nodemailer or similar)
-export async function sendEmail(to: string, subject: string, htmlContent: string): Promise<boolean> {
-  console.log(`📧 Email would be sent to: ${to}`);
-  console.log(`📧 Subject: ${subject}`);
-  console.log(`📧 Content: ${htmlContent.substring(0, 100)}...`);
-  
-  // Simulate email delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  return true; // Always return success for demo
+import { emailService } from './emailService';
+
+// Send email using the email service
+export async function sendEmail(to: string, subject: string, htmlContent: string, type: string = 'general'): Promise<boolean> {
+  return await emailService.sendEmail(to, subject, htmlContent, type);
 }
 
 // Generate approval email content
