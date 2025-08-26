@@ -462,148 +462,462 @@ export const generateTokenPDF: RequestHandler = (req, res) => {
       });
     }
 
-    // Generate PDF-like HTML response (In production, use a PDF library)
+    // Generate professional PDF template
+    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(token.qrCodeData)}`;
+
     const pdfContent = `
       <!DOCTYPE html>
       <html>
       <head>
         <meta charset="utf-8">
-        <title>MIT ADT University - Visitor Token</title>
+        <title>MIT ADT University - Official Visitor Token</title>
         <style>
-          body { 
-            font-family: 'Arial', sans-serif; 
-            margin: 0; 
-            padding: 20px; 
-            background: white;
-            color: #333;
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
           }
-          .token-card {
-            max-width: 400px;
+
+          body {
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            line-height: 1.5;
+            color: #1f2937;
+            background: #f9fafb;
+            padding: 20px;
+          }
+
+          .token-container {
+            max-width: 600px;
             margin: 0 auto;
-            border: 3px solid #2563eb;
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid #e5e7eb;
           }
+
           .header {
-            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #6366f1 100%);
             color: white;
-            padding: 20px;
-            margin: -30px -30px 20px -30px;
-            border-radius: 12px 12px 0 0;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
           }
-          .logo {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 5px;
+
+          .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: rotate(45deg);
           }
-          .subtitle {
-            font-size: 14px;
+
+          .university-logo {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1;
+          }
+
+          .university-name {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            position: relative;
+            z-index: 1;
+          }
+
+          .token-title {
+            font-size: 1rem;
             opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            position: relative;
+            z-index: 1;
           }
+
+          .main-content {
+            padding: 40px 30px;
+          }
+
+          .token-display {
+            text-align: center;
+            margin-bottom: 35px;
+            padding: 25px;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-radius: 16px;
+            border: 2px solid #3b82f6;
+          }
+
+          .token-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #1e40af;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+          }
+
           .token-code {
-            font-size: 32px;
-            font-weight: bold;
-            color: #2563eb;
-            letter-spacing: 3px;
-            margin: 20px 0;
-            padding: 15px;
-            border: 2px dashed #2563eb;
-            background: #f0f9ff;
+            font-family: 'Courier New', monospace;
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: #1e40af;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
           }
+
           .qr-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             margin: 20px 0;
-            padding: 20px;
-            background: #f8fafc;
-            border-radius: 8px;
           }
-          .qr-placeholder {
-            width: 150px;
-            height: 150px;
-            border: 2px solid #e2e8f0;
-            margin: 10px auto;
+
+          .qr-code {
+            width: 180px;
+            height: 180px;
+            border: 3px solid white;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.1);
+            background: white;
+            padding: 8px;
+          }
+
+          .qr-code img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+          }
+
+          .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 35px 0;
+          }
+
+          .detail-item {
+            background: #f8fafc;
+            padding: 18px;
+            border-radius: 12px;
+            border-left: 4px solid #3b82f6;
+          }
+
+          .detail-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+          }
+
+          .detail-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1f2937;
+            word-wrap: break-word;
+          }
+
+          .full-width {
+            grid-column: 1 / -1;
+          }
+
+          .status-badges {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 25px 0;
+          }
+
+          .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+          }
+
+          .badge-active {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+          }
+
+          .badge-secure {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+          }
+
+          .instructions {
+            background: linear-gradient(135deg, #fef7cd 0%, #fef3c7 100%);
+            border: 2px solid #f59e0b;
+            border-radius: 16px;
+            padding: 25px;
+            margin: 30px 0;
+          }
+
+          .instructions-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #92400e;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            background: white;
-            font-size: 12px;
-            color: #64748b;
+            gap: 8px;
           }
-          .details {
-            text-align: left;
-            margin: 20px 0;
-            font-size: 14px;
+
+          .instructions-list {
+            list-style: none;
+            color: #92400e;
           }
-          .details div {
-            margin: 8px 0;
-            padding: 5px 0;
-            border-bottom: 1px solid #f1f5f9;
+
+          .instructions-list li {
+            margin: 10px 0;
+            padding-left: 20px;
+            position: relative;
+            font-weight: 500;
           }
-          .details strong {
-            color: #1e40af;
+
+          .instructions-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            font-weight: 800;
+            color: #f59e0b;
           }
+
+          .security-warning {
+            background: #fef2f2;
+            border: 2px solid #fca5a5;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+          }
+
+          .security-warning-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #991b1b;
+            margin-bottom: 8px;
+          }
+
+          .security-warning-text {
+            font-size: 0.875rem;
+            color: #991b1b;
+            font-weight: 500;
+          }
+
           .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid #e2e8f0;
-            font-size: 12px;
-            color: #64748b;
+            background: #f8fafc;
+            padding: 25px 30px;
+            border-top: 2px solid #e5e7eb;
+            text-align: center;
           }
-          .instructions {
-            background: #fef3c7;
-            border: 1px solid #f59e0b;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 20px 0;
-            text-align: left;
-            font-size: 12px;
+
+          .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
           }
+
+          .footer-logo {
+            font-weight: 700;
+            color: #1f2937;
+          }
+
+          .footer-details {
+            font-size: 0.75rem;
+            color: #6b7280;
+            text-align: right;
+          }
+
+          .verification-section {
+            background: #f0f9ff;
+            border: 2px solid #0ea5e9;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+          }
+
+          .verification-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #0c4a6e;
+            margin-bottom: 10px;
+          }
+
+          .verification-url {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: #0c4a6e;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #e0f2fe;
+          }
+
           @media print {
-            body { margin: 0; padding: 10px; }
-            .token-card { box-shadow: none; }
+            body {
+              padding: 0;
+              background: white;
+            }
+            .token-container {
+              box-shadow: none;
+              border: 2px solid #1e40af;
+            }
+            .qr-code {
+              print-color-adjust: exact;
+              -webkit-print-color-adjust: exact;
+            }
+          }
+
+          @page {
+            margin: 1cm;
+            size: A4;
           }
         </style>
       </head>
       <body>
-        <div class="token-card">
+        <div class="token-container">
+          <!-- Header -->
           <div class="header">
-            <div class="logo">🎓 MIT ADT University</div>
-            <div class="subtitle">Official Visitor Token</div>
+            <div class="university-logo">🎓</div>
+            <div class="university-name">MIT ADT University</div>
+            <div class="token-title">Official Visitor Access Token</div>
           </div>
-          
-          <div class="token-code">${token.tokenCode}</div>
-          
-          <div class="qr-section">
-            <div><strong>QR Code</strong></div>
-            <div class="qr-placeholder">
-              Scan with Security App<br/>
-              QR Code: ${token.qrCodeData}
+
+          <!-- Main Content -->
+          <div class="main-content">
+            <!-- Token Display -->
+            <div class="token-display">
+              <div class="token-label">Digital Access Code</div>
+              <div class="token-code">${token.tokenCode}</div>
+
+              <div class="qr-section">
+                <div class="qr-code">
+                  <img src="${qrCodeUrl}" alt="QR Code for ${token.tokenCode}" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Status Badges -->
+            <div class="status-badges">
+              <div class="status-badge badge-active">✓ Authorized</div>
+              <div class="status-badge badge-secure">🔒 Secure Token</div>
+            </div>
+
+            <!-- Visitor Details -->
+            <div class="details-grid">
+              <div class="detail-item">
+                <div class="detail-label">Visitor Name</div>
+                <div class="detail-value">${token.visitor?.name || 'N/A'}</div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-label">Contact Email</div>
+                <div class="detail-value">${token.visitor?.email || 'N/A'}</div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-label">Faculty Contact</div>
+                <div class="detail-value">${token.faculty?.name || 'N/A'}</div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-label">Department</div>
+                <div class="detail-value">${token.faculty?.department?.name || 'N/A'}</div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-label">Valid Until</div>
+                <div class="detail-value">${new Date(token.expiresAt).toLocaleDateString('en-IN', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}</div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-label">Generated On</div>
+                <div class="detail-value">${new Date(token.createdAt).toLocaleDateString('en-IN', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}</div>
+              </div>
+
+              <div class="detail-item full-width">
+                <div class="detail-label">Purpose of Visit</div>
+                <div class="detail-value">${token.request?.purpose || 'Official University Business'}</div>
+              </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="instructions">
+              <div class="instructions-title">
+                <span>📋</span>
+                Entry Instructions
+              </div>
+              <ul class="instructions-list">
+                <li>Present this token at the main security gate</li>
+                <li>Show the QR code to security personnel for scanning</li>
+                <li>Carry a valid government-issued photo ID</li>
+                <li>Token is valid for <strong>one-time entry only</strong></li>
+                <li>Contact ${token.faculty?.name || 'faculty member'} if assistance needed</li>
+                <li>Arrive during your scheduled visit time</li>
+              </ul>
+            </div>
+
+            <!-- Verification Section -->
+            <div class="verification-section">
+              <div class="verification-title">Online Verification</div>
+              <div class="verification-url">https://visitor.mitadt.edu.in/verify/${token.tokenCode}</div>
+            </div>
+
+            <!-- Security Warning -->
+            <div class="security-warning">
+              <div class="security-warning-title">⚠️ Security Notice</div>
+              <div class="security-warning-text">
+                This token is digitally signed and traceable. Unauthorized duplication or misuse is prohibited.
+                Token becomes invalid after use or expiration.
+              </div>
             </div>
           </div>
-          
-          <div class="details">
-            <div><strong>Visitor:</strong> ${token.visitor?.name}</div>
-            <div><strong>Email:</strong> ${token.visitor?.email}</div>
-            <div><strong>Phone:</strong> ${token.visitor?.phone}</div>
-            <div><strong>Purpose:</strong> ${token.request?.purpose || 'Official Visit'}</div>
-            <div><strong>Faculty:</strong> ${token.faculty?.name}</div>
-            <div><strong>Department:</strong> ${token.faculty?.department?.name}</div>
-            <div><strong>Valid Until:</strong> ${new Date(token.expiresAt).toLocaleDateString('en-IN')}</div>
-            <div><strong>Generated:</strong> ${new Date(token.createdAt).toLocaleDateString('en-IN')}</div>
-          </div>
-          
-          <div class="instructions">
-            <strong>📋 Instructions:</strong><br/>
-            • Present this token at the security gate<br/>
-            • One-time use only<br/>
-            • Keep token code ready for manual verification<br/>
-            • Contact faculty if assistance needed
-          </div>
-          
+
+          <!-- Footer -->
           <div class="footer">
-            <div>© 2024 MIT ADT University</div>
-            <div>Token ID: ${token.id}</div>
+            <div class="footer-content">
+              <div class="footer-logo">MIT ADT University</div>
+              <div class="footer-details">
+                Token ID: ${token.id}<br/>
+                Generated by: Visitor Management System<br/>
+                © 2024 MIT ADT University. All rights reserved.
+              </div>
+            </div>
           </div>
         </div>
       </body>
