@@ -11,9 +11,11 @@ import NotFound from "./pages/NotFound";
 import VisitorRegister from "./pages/visitor/Register";
 import VisitorLogin from "./pages/visitor/Login";
 import FacultyLogin from "./pages/faculty/Login";
+import FacultyDashboard from "./pages/faculty/Dashboard";
 import SecurityLogin from "./pages/security/Login";
 import SecurityScanner from "./pages/security/Scanner";
 import AdminLogin from "./pages/admin/Login";
+import AdminDashboard from "./pages/admin/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -28,9 +30,12 @@ const App = () => (
           <Route path="/visitor/register" element={<VisitorRegister />} />
           <Route path="/visitor/login" element={<VisitorLogin />} />
           <Route path="/faculty/login" element={<FacultyLogin />} />
+          <Route path="/faculty/dashboard" element={<FacultyDashboard />} />
           <Route path="/security/login" element={<SecurityLogin />} />
           <Route path="/security/scanner" element={<SecurityScanner />} />
+          <Route path="/security/dashboard" element={<SecurityScanner />} />
           <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
