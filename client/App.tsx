@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import VisitorRegister from "./pages/visitor/Register";
 import VisitorLogin from "./pages/visitor/Login";
+import VisitorDashboard from "./pages/visitor/Dashboard";
 import FacultyLogin from "./pages/faculty/Login";
 import FacultyDashboard from "./pages/faculty/Dashboard";
 import SecurityLogin from "./pages/security/Login";
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/visitor/register" element={<VisitorRegister />} />
           <Route path="/visitor/login" element={<VisitorLogin />} />
+          <Route path="/visitor/dashboard" element={<VisitorDashboard />} />
           <Route path="/faculty/login" element={<FacultyLogin />} />
           <Route path="/faculty/dashboard" element={<FacultyDashboard />} />
           <Route path="/security/login" element={<SecurityLogin />} />
