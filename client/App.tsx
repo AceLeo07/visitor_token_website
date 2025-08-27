@@ -8,7 +8,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import NotFoundPortal from "./pages/NotFoundPortal";
 import VisitorRegister from "./pages/visitor/Register";
+import VisitorRegistration from "./pages/VisitorRegistration";
 import VisitorLogin from "./pages/visitor/Login";
 import VisitorDashboard from "./pages/visitor/Dashboard";
 import FacultyPortal from "./pages/FacultyPortal";
@@ -31,7 +33,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/visitor/register" element={<VisitorRegister />} />
+          <Route path="/visitor/register" element={<VisitorRegistration />} />
           <Route path="/visitor/login" element={<VisitorLogin />} />
           <Route path="/visitor/dashboard" element={<VisitorDashboard />} />
 
@@ -51,7 +53,7 @@ const App = () => (
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={<NotFoundPortal />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
