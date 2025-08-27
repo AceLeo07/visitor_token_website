@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Users, Clock, CheckCircle, UserCheck, Building } from "lucide-react";
+import { Shield, Users, Clock, CheckCircle, UserCheck, Building, LogIn, User } from "lucide-react";
 import { Link } from "react-router-dom";
+import MitAdtLogo from "@/components/shared/MitAdtLogo";
 
 export default function Index() {
   return (
@@ -13,23 +14,24 @@ export default function Index() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <Building className="w-6 h-6 text-white" />
-              </div>
+              <MitAdtLogo size="md" />
               <div>
                 <h1 className="text-xl font-bold text-gray-900">MIT ADT University</h1>
-                <p className="text-sm text-gray-600">Visitor Token System</p>
+                <p className="text-sm text-gray-600">Visitor Access Portal</p>
               </div>
             </div>
             <nav className="flex space-x-4">
               <Link to="/visitor/login">
-                <Button variant="ghost" size="sm">Visitor Login</Button>
+                <Button variant="ghost" size="sm">
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Login
+                </Button>
               </Link>
-              <Link to="/faculty/login">
-                <Button variant="ghost" size="sm">Faculty Login</Button>
-              </Link>
-              <Link to="/admin/login">
-                <Button variant="outline" size="sm">Admin Portal</Button>
+              <Link to="/visitor/register">
+                <Button variant="outline" size="sm">
+                  <User className="w-4 h-4 mr-2" />
+                  Register
+                </Button>
               </Link>
             </nav>
           </div>
@@ -40,27 +42,27 @@ export default function Index() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-16">
           <Badge className="mb-4 bg-blue-100 text-blue-800 hover:bg-blue-100">
-            Secure & Efficient
+            Welcome to MIT ADT University
           </Badge>
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-            Digital Visitor
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600"> Token System</span>
+            Visitor Access
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600"> Portal</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            Streamline campus access with our modern, secure visitor management system. 
-            Generate digital tokens, track entries, and ensure campus security.
+            Request campus access quickly and securely. Submit your visit request and receive
+            a digital token for seamless entry to MIT ADT University.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/visitor/register">
               <Button size="lg" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
                 <UserCheck className="w-5 h-5 mr-2" />
-                Request Visitor Access
+                Request Campus Access
               </Button>
             </Link>
-            <Link to="/security/scanner">
+            <Link to="/visitor/login">
               <Button size="lg" variant="outline">
-                <Shield className="w-5 h-5 mr-2" />
-                Security Scanner
+                <LogIn className="w-5 h-5 mr-2" />
+                Check Token Status
               </Button>
             </Link>
           </div>
@@ -105,21 +107,23 @@ export default function Index() {
           </Card>
         </div>
 
-        {/* Role-based Access Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Visitor Journey Steps */}
+        <div className="grid md:grid-cols-3 gap-8">
           <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
             <CardHeader className="text-center">
               <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-105 transition-transform">
-                <Users className="w-8 h-8 text-white" />
+                <User className="w-8 h-8 text-white" />
               </div>
-              <CardTitle className="text-lg">Visitors</CardTitle>
+              <CardTitle className="text-lg">1. Register Your Visit</CardTitle>
               <CardDescription className="text-sm">
-                Register and request campus access tokens
+                Complete the visitor registration form with your details and visit purpose
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
               <Link to="/visitor/register">
-                <Button className="w-full" variant="outline">Get Started</Button>
+                <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+                  Start Registration
+                </Button>
               </Link>
             </CardContent>
           </Card>
@@ -127,50 +131,35 @@ export default function Index() {
           <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
             <CardHeader className="text-center">
               <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-105 transition-transform">
-                <UserCheck className="w-8 h-8 text-white" />
+                <Clock className="w-8 h-8 text-white" />
               </div>
-              <CardTitle className="text-lg">Faculty</CardTitle>
+              <CardTitle className="text-lg">2. Await Approval</CardTitle>
               <CardDescription className="text-sm">
-                Approve visitor requests and manage invitations
+                Faculty will review your request and approve or provide feedback
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
-              <Link to="/faculty/login">
-                <Button className="w-full" variant="outline">Faculty Portal</Button>
-              </Link>
+              <Button className="w-full" variant="outline" disabled>
+                Processing...
+              </Button>
             </CardContent>
           </Card>
 
           <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
             <CardHeader className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-105 transition-transform">
-                <Shield className="w-8 h-8 text-white" />
+              <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-105 transition-transform">
+                <CheckCircle className="w-8 h-8 text-white" />
               </div>
-              <CardTitle className="text-lg">Security</CardTitle>
+              <CardTitle className="text-lg">3. Receive Token</CardTitle>
               <CardDescription className="text-sm">
-                Scan tokens and monitor campus access
+                Get your digital access token via email and present at campus entrance
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
-              <Link to="/security/login">
-                <Button className="w-full" variant="outline">Security Portal</Button>
-              </Link>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
-            <CardHeader className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-105 transition-transform">
-                <Building className="w-8 h-8 text-white" />
-              </div>
-              <CardTitle className="text-lg">Admin</CardTitle>
-              <CardDescription className="text-sm">
-                System administration and user management
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-center">
-              <Link to="/admin/login">
-                <Button className="w-full" variant="outline">Admin Portal</Button>
+              <Link to="/visitor/login">
+                <Button className="w-full" variant="outline">
+                  Check Status
+                </Button>
               </Link>
             </CardContent>
           </Card>
@@ -182,9 +171,7 @@ export default function Index() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-3 mb-4 md:mb-0">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <Building className="w-5 h-5 text-white" />
-              </div>
+              <MitAdtLogo size="sm" />
               <span className="font-semibold text-gray-900">MIT ADT University</span>
             </div>
             <p className="text-sm text-gray-600">
