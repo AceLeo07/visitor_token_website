@@ -1,21 +1,24 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { 
-  QrCode, 
-  Send, 
-  Download, 
-  User, 
-  Mail, 
-  Phone, 
-  Calendar, 
+import {
+  QrCode,
+  Send,
+  Download,
+  User,
+  Mail,
+  Phone,
+  Calendar,
   FileText,
   Check,
-  AlertCircle
+  AlertCircle,
+  Upload,
+  X,
+  Image as ImageIcon
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -26,6 +29,7 @@ interface TokenGenerationData {
   purpose: string;
   visitDate: string;
   expiryDate: string;
+  visitorImage?: string; // Base64 encoded image
 }
 
 interface GeneratedToken {
@@ -51,6 +55,8 @@ export default function TokenGeneration() {
   });
   const [generatedToken, setGeneratedToken] = useState<GeneratedToken | null>(null);
   const [loading, setLoading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const handleInputChange = (field: keyof TokenGenerationData, value: string) => {
@@ -58,6 +64,53 @@ export default function TokenGeneration() {
       ...prev,
       [field]: value
     }));
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File Too Large",
+          description: "Please select an image smaller than 5MB",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Invalid File Type",
+          description: "Please select a valid image file",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64String = e.target?.result as string;
+        setImagePreview(base64String);
+        setFormData(prev => ({
+          ...prev,
+          visitorImage: base64String
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setImagePreview("");
+    setFormData(prev => ({
+      ...prev,
+      visitorImage: undefined
+    }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const validateForm = () => {
@@ -147,6 +200,7 @@ export default function TokenGeneration() {
           visitDate: "",
           expiryDate: ""
         });
+        removeImage();
       } else {
         toast({
           title: "Generation Failed",
@@ -304,6 +358,54 @@ export default function TokenGeneration() {
                 />
               </div>
 
+              {/* Visitor Photo Upload */}
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4" />
+                  Visitor Photo (Optional)
+                </Label>
+
+                {imagePreview ? (
+                  <div className="relative">
+                    <div className="w-full h-32 border-2 border-gray-200 rounded-lg overflow-hidden bg-gray-50">
+                      <img
+                        src={imagePreview}
+                        alt="Visitor preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      className="absolute top-2 right-2"
+                      onClick={removeImage}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div
+                    className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-gray-400 transition-colors"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <div className="text-center">
+                      <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                      <p className="text-sm text-gray-600">Click to upload photo</p>
+                      <p className="text-xs text-gray-500">JPG, PNG up to 5MB</p>
+                    </div>
+                  </div>
+                )}
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="visitorEmail" className="flex items-center gap-2">
                   <Mail className="w-4 h-4" />
@@ -418,6 +520,7 @@ export default function TokenGeneration() {
           <ul className="text-blue-800 space-y-2 text-sm">
             <li>• Generated tokens are sent immediately to the visitor's email</li>
             <li>• Tokens can be downloaded as PDF for physical distribution</li>
+            <li>• Upload visitor photos for enhanced security verification</li>
             <li>• Default expiry is 1 day after visit date unless specified</li>
             <li>• Visitor will receive a professional token with QR code</li>
             <li>• All generated tokens are logged for security and reporting</li>
