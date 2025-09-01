@@ -60,11 +60,40 @@ export default function TokenGeneration() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
+  // Check for logged-in visitor profile on component mount
+  useEffect(() => {
+    const profileInfo = localStorage.getItem("visitor_profile");
+    if (profileInfo) {
+      try {
+        const profile = JSON.parse(profileInfo);
+        setVisitorProfile(profile);
+      } catch (error) {
+        console.error("Error parsing visitor profile:", error);
+      }
+    }
+  }, []);
+
   const handleInputChange = (field: keyof TokenGenerationData, value: string) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
+  };
+
+  const prefillVisitorDetails = () => {
+    if (!visitorProfile) return;
+
+    setFormData(prev => ({
+      ...prev,
+      visitorName: visitorProfile.name || "",
+      visitorEmail: visitorProfile.email || "",
+      visitorPhone: visitorProfile.phone || ""
+    }));
+
+    toast({
+      title: "Details Pre-filled",
+      description: `Form filled with ${visitorProfile.name}'s details`,
+    });
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
