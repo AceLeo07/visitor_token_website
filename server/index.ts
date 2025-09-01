@@ -75,7 +75,6 @@ export function createServer() {
   app.get("/api/admin/faculty-departments", authenticateToken, requireAdmin, getFacultyAndDepartments);
 
   // Security Routes (Protected)
-  app.post("/api/security/verify", authenticateToken, requireRole('security'), verifyToken);
   app.get("/api/security/dashboard", authenticateToken, requireRole('security'), getSecurityDashboard);
   app.get("/api/security/logs", authenticateToken, requireRole('security'), getSecurityLogs);
   app.post("/api/security/bulk-verify", authenticateToken, requireRole('security'), bulkVerifyTokens);
