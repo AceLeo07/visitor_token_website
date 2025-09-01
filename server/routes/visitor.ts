@@ -3,6 +3,7 @@ import { db } from "../database";
 import { sendEmail } from "../utils";
 import { emailService } from "../emailService";
 import { VisitorRegistrationRequest } from "@shared/types";
+import bcrypt from "bcrypt";
 
 // Visitor Registration and Token Request
 export const registerVisitor: RequestHandler = async (req, res) => {
