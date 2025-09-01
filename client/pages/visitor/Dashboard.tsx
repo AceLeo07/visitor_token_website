@@ -209,34 +209,17 @@ Instructions:
           </Button>
         </div>
 
-        {/* Token Status Alert */}
-        <Card className={`mb-8 ${
-          tokenStatus === 'valid' ? 'border-green-200 bg-green-50' :
-          tokenStatus === 'used' ? 'border-blue-200 bg-blue-50' :
-          'border-red-200 bg-red-50'
-        }`}>
+        {/* Profile Overview */}
+        <Card className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              {tokenStatus === 'valid' && <CheckCircle className="w-6 h-6 text-green-600" />}
-              {tokenStatus === 'used' && <Clock className="w-6 h-6 text-blue-600" />}
-              {tokenStatus === 'expired' && <AlertCircle className="w-6 h-6 text-red-600" />}
-              
+              <User className="w-6 h-6 text-blue-600" />
               <div>
-                <h3 className={`font-semibold ${
-                  tokenStatus === 'valid' ? 'text-green-800' :
-                  tokenStatus === 'used' ? 'text-blue-800' :
-                  'text-red-800'
-                }`}>
-                  Token Status: {tokenStatus === 'valid' ? 'Active' : tokenStatus === 'used' ? 'Used' : 'Expired/Invalid'}
+                <h3 className="font-semibold text-blue-800">
+                  Profile Overview
                 </h3>
-                <p className={`text-sm ${
-                  tokenStatus === 'valid' ? 'text-green-700' :
-                  tokenStatus === 'used' ? 'text-blue-700' :
-                  'text-red-700'
-                }`}>
-                  {tokenStatus === 'valid' && 'Your token is ready for campus entry'}
-                  {tokenStatus === 'used' && 'This token has been used for campus entry'}
-                  {tokenStatus === 'expired' && 'This token is no longer valid'}
+                <p className="text-sm text-blue-700">
+                  You have {visitorProfile.tokens?.length || 0} token(s) in your account
                 </p>
               </div>
             </div>
