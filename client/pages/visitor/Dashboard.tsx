@@ -20,71 +20,111 @@ import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/shared/Header";
 import Footer from "@/components/shared/Footer";
 
-interface VisitorInfo {
+interface VisitorProfile {
+  id: string;
   name: string;
   email: string;
   phone: string;
-  purpose: string;
-  facultyName: string;
-  departmentName: string;
-  visitDate: string;
+  company?: string;
+  address: string;
+  tokens: Token[];
+  sessionToken: string;
+}
+
+interface Token {
+  id: string;
   tokenCode: string;
+  qrCodeData: string;
+  isUsed: boolean;
+  usedAt?: string;
+  expiresAt: string;
+  generatedBy: 'faculty' | 'approval';
+  createdAt: string;
+  visitor?: {
+    name: string;
+    email: string;
+    phone: string;
+    purpose: string;
+  };
+  faculty?: {
+    name: string;
+  };
+  request?: {
+    departmentName?: string;
+    visitDate: string;
+    purpose: string;
+  };
 }
 
 export default function VisitorDashboard() {
-  const [visitor, setVisitor] = useState<VisitorInfo | null>(null);
-  const [tokenStatus, setTokenStatus] = useState<'valid' | 'used' | 'expired'>('valid');
+  const [visitorProfile, setVisitorProfile] = useState<VisitorProfile | null>(null);
+  const [selectedToken, setSelectedToken] = useState<Token | null>(null);
+  const [tokenStatuses, setTokenStatuses] = useState<{[key: string]: 'valid' | 'used' | 'expired'}>({});
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
     // Check if visitor is logged in
-    const visitorInfo = localStorage.getItem("visitor_info");
-    
-    if (!visitorInfo) {
+    const profileInfo = localStorage.getItem("visitor_profile");
+
+    if (!profileInfo) {
       toast({
         title: "Authentication Required",
-        description: "Please log in to view your token details",
+        description: "Please log in to view your profile",
         variant: "destructive"
       });
       navigate("/visitor/login");
       return;
     }
 
-    const visitor = JSON.parse(visitorInfo);
-    setVisitor(visitor);
-    
-    // Check token status
-    checkTokenStatus(visitor.tokenCode);
+    const profile = JSON.parse(profileInfo);
+    setVisitorProfile(profile);
+
+    // Set the latest token as selected by default
+    if (profile.tokens && profile.tokens.length > 0) {
+      const latestToken = profile.tokens.sort((a: Token, b: Token) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )[0];
+      setSelectedToken(latestToken);
+    }
+
+    // Check status for all tokens
+    checkAllTokenStatuses(profile.tokens || []);
   }, [navigate, toast]);
 
-  const checkTokenStatus = async (tokenCode: string) => {
-    try {
-      const response = await fetch("/api/security/verify", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ tokenCode })
-      });
+  const checkAllTokenStatuses = async (tokens: Token[]) => {
+    const statuses: {[key: string]: 'valid' | 'used' | 'expired'} = {};
 
-      const data = await response.json();
-      
-      if (data.success && data.valid) {
-        setTokenStatus('valid');
-      } else if (data.message?.includes('used')) {
-        setTokenStatus('used');
-      } else {
-        setTokenStatus('expired');
+    for (const token of tokens) {
+      try {
+        const response = await fetch("/api/security/verify", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ tokenCode: token.tokenCode })
+        });
+
+        const data = await response.json();
+
+        if (data.success && data.valid) {
+          statuses[token.id] = 'valid';
+        } else if (data.message?.includes('used')) {
+          statuses[token.id] = 'used';
+        } else {
+          statuses[token.id] = 'expired';
+        }
+      } catch (error) {
+        console.error(`Token status check error for ${token.tokenCode}:`, error);
+        statuses[token.id] = 'expired';
       }
-    } catch (error) {
-      console.error("Token status check error:", error);
-      setTokenStatus('expired');
     }
+
+    setTokenStatuses(statuses);
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("visitor_info");
+    localStorage.removeItem("visitor_profile");
     toast({
       title: "Logged Out",
       description: "You have been successfully logged out",
@@ -93,22 +133,24 @@ export default function VisitorDashboard() {
   };
 
   const downloadToken = () => {
-    if (!visitor) return;
-    
+    if (!visitorProfile || !selectedToken) return;
+
+    const tokenStatus = tokenStatuses[selectedToken.id] || 'unknown';
     const tokenData = `
 MIT ADT University - Visitor Token
 ===================================
 
-Visitor: ${visitor.name}
-Email: ${visitor.email}
-Phone: ${visitor.phone}
-Token Code: ${visitor.tokenCode}
+Visitor: ${visitorProfile.name}
+Email: ${visitorProfile.email}
+Phone: ${visitorProfile.phone}
+Token Code: ${selectedToken.tokenCode}
 
 Visit Details:
-Faculty: ${visitor.facultyName}
-Department: ${visitor.departmentName}
-Purpose: ${visitor.purpose}
-Visit Date: ${visitor.visitDate}
+Faculty: ${selectedToken.faculty?.name || 'N/A'}
+Department: ${selectedToken.request?.departmentName || 'N/A'}
+Purpose: ${selectedToken.request?.purpose || selectedToken.visitor?.purpose || 'N/A'}
+Visit Date: ${selectedToken.request?.visitDate || 'N/A'}
+Generated: ${new Date(selectedToken.createdAt).toLocaleDateString()}
 
 Status: ${tokenStatus.toUpperCase()}
 
@@ -125,7 +167,7 @@ Instructions:
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `MIT_Token_${visitor.tokenCode}.txt`;
+    a.download = `MIT_Token_${selectedToken.tokenCode}.txt`;
     a.click();
     window.URL.revokeObjectURL(url);
 
@@ -135,12 +177,12 @@ Instructions:
     });
   };
 
-  if (!visitor) {
+  if (!visitorProfile) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your token details...</p>
+          <p className="text-gray-600">Loading your profile...</p>
         </div>
       </div>
     );
@@ -155,10 +197,10 @@ Instructions:
         <div className="flex justify-between items-center mb-8">
           <div>
             <h2 className="text-3xl font-bold text-gray-900">
-              Welcome, {visitor.name}! 👋
+              Welcome, {visitorProfile.name}! 👋
             </h2>
             <p className="text-gray-600 mt-2">
-              Your visitor token and access information
+              Your visitor profile and token management
             </p>
           </div>
           <Button variant="outline" onClick={handleLogout}>
