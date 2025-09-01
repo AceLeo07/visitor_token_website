@@ -26,8 +26,9 @@ export const registerVisitor: RequestHandler = async (req, res) => {
       purpose,
       departmentId,
       facultyId,
-      visitDate
-    }: VisitorRegistrationRequest = req.body;
+      visitDate,
+      password
+    }: VisitorRegistrationRequest & { password: string } = req.body;
 
     // Validation
     if (!name || !email || !phone || !address || !purpose || !departmentId || !facultyId || !visitDate) {
