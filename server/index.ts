@@ -6,7 +6,7 @@ import { authenticateToken, requireRole, requireAdmin } from "./auth";
 // Import route handlers
 import { handleDemo } from "./routes/demo";
 import { facultyLogin, securityLogin, getDepartmentsAndFaculty } from "./routes/auth";
-import { registerVisitor } from "./routes/visitor";
+import { registerVisitor, loginVisitorProfile } from "./routes/visitor";
 import {
   getFacultyDashboard,
   getFacultyRequests,
