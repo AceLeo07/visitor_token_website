@@ -166,3 +166,72 @@ export const registerVisitor: RequestHandler = async (req, res) => {
     });
   }
 };
+
+// Visitor Profile Login
+export const loginVisitorProfile: RequestHandler = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Validation
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required"
+      });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email format"
+      });
+    }
+
+    // Find visitor profile by email
+    const visitorProfile = db.getVisitorProfileByEmail(email);
+    if (!visitorProfile) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password"
+      });
+    }
+
+    // Verify password
+    if (!verifyPassword(password, visitorProfile.password)) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password"
+      });
+    }
+
+    // Update last login time
+    db.updateVisitorProfile(visitorProfile.id, { lastLoginAt: new Date() });
+
+    // Get visitor tokens
+    const tokens = db.getVisitorTokens(visitorProfile.id);
+
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      profile: {
+        id: visitorProfile.id,
+        name: visitorProfile.name,
+        email: visitorProfile.email,
+        phone: visitorProfile.phone,
+        company: visitorProfile.company,
+        address: visitorProfile.address,
+        tokens: tokens
+      },
+      token: `visitor_${visitorProfile.id}_${Date.now()}` // Simple token for session
+    });
+
+  } catch (error) {
+    console.error('Visitor profile login error:', error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error. Please try again later."
+    });
+  }
+};
