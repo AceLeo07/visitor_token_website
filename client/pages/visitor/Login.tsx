@@ -13,9 +13,9 @@ import Footer from "@/components/shared/Footer";
 export default function VisitorLogin() {
   const [formData, setFormData] = useState({
     email: "",
-    tokenCode: ""
+    password: ""
   });
-  const [showTokenCode, setShowTokenCode] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -30,10 +30,10 @@ export default function VisitorLogin() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.email || !formData.tokenCode) {
+    if (!formData.email || !formData.password) {
       toast({
         title: "Validation Error",
-        description: "Email and token code are required",
+        description: "Email and password are required",
         variant: "destructive"
       });
       return;
@@ -53,47 +53,39 @@ export default function VisitorLogin() {
     try {
       setLoading(true);
 
-      // For visitor login, we'll verify their token directly
-      const response = await fetch("/api/security/verify", {
+      // Login with visitor profile credentials
+      const response = await fetch("/api/visitor/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          tokenCode: formData.tokenCode
+          email: formData.email,
+          password: formData.password
         })
       });
 
       const data = await response.json();
 
-      if (data.success && data.valid) {
-        // Check if the email matches the token's visitor email
-        if (data.visitor?.email?.toLowerCase() === formData.email.toLowerCase()) {
-          toast({
-            title: "✅ Login Successful",
-            description: `Welcome ${data.visitor.name}! Your token is valid.`,
-            duration: 5000
-          });
+      if (data.success) {
+        toast({
+          title: "✅ Login Successful",
+          description: `Welcome back, ${data.profile.name}!`,
+          duration: 5000
+        });
 
-          // Store visitor info
-          localStorage.setItem("visitor_info", JSON.stringify({
-            ...data.visitor,
-            tokenCode: formData.tokenCode
-          }));
+        // Store visitor profile info
+        localStorage.setItem("visitor_profile", JSON.stringify({
+          ...data.profile,
+          sessionToken: data.token
+        }));
 
-          // Redirect to visitor dashboard (we'll create this)
-          navigate("/visitor/dashboard");
-        } else {
-          toast({
-            title: "Email Mismatch",
-            description: "The email address doesn't match the token's registered email",
-            variant: "destructive"
-          });
-        }
+        // Redirect to visitor dashboard
+        navigate("/visitor/dashboard");
       } else {
         toast({
-          title: "Invalid Token",
-          description: data.message || "Token not found or already used",
+          title: "Login Failed",
+          description: data.message || "Invalid email or password",
           variant: "destructive"
         });
       }
@@ -155,20 +147,19 @@ export default function VisitorLogin() {
                 />
               </div>
 
-              {/* Token Code */}
+              {/* Password */}
               <div className="space-y-2">
-                <Label htmlFor="tokenCode" className="flex items-center gap-2">
+                <Label htmlFor="password" className="flex items-center gap-2">
                   <User className="w-4 h-4" />
-                  Token Code
+                  Password
                 </Label>
                 <div className="relative">
                   <Input
-                    id="tokenCode"
-                    type={showTokenCode ? "text" : "password"}
-                    placeholder="Enter your token code"
-                    value={formData.tokenCode}
-                    onChange={(e) => handleInputChange("tokenCode", e.target.value.toUpperCase())}
-                    className="font-mono"
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={(e) => handleInputChange("password", e.target.value)}
                     required
                   />
                   <Button
@@ -176,13 +167,13 @@ export default function VisitorLogin() {
                     variant="ghost"
                     size="sm"
                     className="absolute right-2 top-1/2 transform -translate-y-1/2 h-auto p-1"
-                    onClick={() => setShowTokenCode(!showTokenCode)}
+                    onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showTokenCode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </Button>
                 </div>
                 <p className="text-xs text-gray-500">
-                  Enter the token code from your approval email
+                  Enter the password you created during registration
                 </p>
               </div>
 
@@ -195,12 +186,12 @@ export default function VisitorLogin() {
                 {loading ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Verifying...
+                    Signing In...
                   </>
                 ) : (
                   <>
                     <LogIn className="w-4 h-4 mr-2" />
-                    Verify & Login
+                    Sign In
                   </>
                 )}
               </Button>
@@ -209,12 +200,12 @@ export default function VisitorLogin() {
             {/* Register Link */}
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
-                Don't have a token yet?{" "}
+                Don't have an account?{" "}
                 <Link
                   to="/visitor/register"
                   className="text-blue-600 hover:text-blue-700 font-medium"
                 >
-                  Request Access
+                  Create Account
                 </Link>
               </p>
             </div>
@@ -224,12 +215,12 @@ export default function VisitorLogin() {
         {/* Information Box */}
         <Card className="mt-6 bg-blue-50 border-blue-200">
           <CardContent className="pt-4">
-            <h3 className="font-semibold text-blue-900 mb-3">📧 Need Help?</h3>
+            <h3 className="font-semibold text-blue-900 mb-3">🔑 Account Access</h3>
             <ul className="text-blue-800 space-y-2 text-sm">
-              <li>• Check your email for the token code after approval</li>
-              <li>• Use the same email address you registered with</li>
-              <li>• Token codes are case-sensitive</li>
-              <li>• Contact the faculty member if you need assistance</li>
+              <li>• Use the email and password from your registration</li>
+              <li>• View all your tokens and visit history</li>
+              <li>• Track token status and updates</li>
+              <li>• Access your profile information</li>
             </ul>
           </CardContent>
         </Card>
