@@ -191,7 +191,9 @@ export default function VisitorRegister() {
           company: "",
           address: "",
           purpose: "",
-          visitDate: ""
+          visitDate: "",
+          password: "",
+          confirmPassword: ""
         });
         setSelectedDepartment("");
         setSelectedFaculty("");
