@@ -123,6 +123,20 @@ export interface SecurityLoginRequest {
   password: string;
 }
 
+export interface VisitorProfileCreateRequest {
+  name: string;
+  email: string;
+  phone: string;
+  company?: string;
+  address: string;
+  password: string;
+}
+
+export interface VisitorProfileLoginRequest {
+  email: string;
+  password: string;
+}
+
 export interface TokenGenerationRequest {
   visitorName: string;
   visitorEmail: string;
