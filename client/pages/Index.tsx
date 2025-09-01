@@ -56,13 +56,13 @@ export default function Index() {
             <Link to="/visitor/register">
               <Button size="lg" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
                 <UserCheck className="w-5 h-5 mr-2" />
-                Request Campus Access
+                Create Account & Request Access
               </Button>
             </Link>
             <Link to="/visitor/login">
               <Button size="lg" variant="outline">
                 <LogIn className="w-5 h-5 mr-2" />
-                Check Token Status
+                Login to Your Account
               </Button>
             </Link>
           </div>
