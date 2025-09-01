@@ -31,10 +31,18 @@ export const registerVisitor: RequestHandler = async (req, res) => {
     }: VisitorRegistrationRequest & { password: string } = req.body;
 
     // Validation
-    if (!name || !email || !phone || !address || !purpose || !departmentId || !facultyId || !visitDate) {
+    if (!name || !email || !phone || !address || !purpose || !departmentId || !facultyId || !visitDate || !password) {
       return res.status(400).json({
         success: false,
         message: "All required fields must be provided"
+      });
+    }
+
+    // Password validation
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 6 characters long"
       });
     }
 
