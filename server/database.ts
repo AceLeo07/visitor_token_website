@@ -1,4 +1,4 @@
-import { Department, Faculty, Security, Visitor, TokenRequest, Token, SecurityLog } from '@shared/types';
+import { Department, Faculty, Security, Visitor, VisitorProfile, TokenRequest, Token, SecurityLog } from '@shared/types';
 
 // In-memory database simulation (In production, use SQLite/PostgreSQL)
 class Database {
