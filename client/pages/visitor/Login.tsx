@@ -125,7 +125,7 @@ export default function VisitorLogin() {
             </div>
             <CardTitle className="text-xl">Visitor Login</CardTitle>
             <CardDescription>
-              Access your token information and visit details
+              Access your visitor profile and manage your tokens
             </CardDescription>
           </CardHeader>
 
