@@ -10,7 +10,6 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import NotFoundPortal from "./pages/NotFoundPortal";
 import VisitorRegister from "./pages/visitor/Register";
-import VisitorRegistration from "./pages/VisitorRegistration";
 import VisitorLogin from "./pages/visitor/Login";
 import VisitorDashboard from "./pages/visitor/Dashboard";
 import FacultyPortal from "./pages/FacultyPortal";
