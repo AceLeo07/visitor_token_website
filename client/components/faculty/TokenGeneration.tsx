@@ -361,13 +361,34 @@ export default function TokenGeneration() {
       {/* Token Generation Form */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <QrCode className="w-5 h-5" />
-            Generate Direct Token
-          </CardTitle>
-          <CardDescription>
-            Create a visitor token without waiting for a request
-          </CardDescription>
+          <div className="flex justify-between items-start">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <QrCode className="w-5 h-5" />
+                Generate Direct Token
+              </CardTitle>
+              <CardDescription>
+                Create a visitor token without waiting for a request
+              </CardDescription>
+            </div>
+            {visitorProfile && (
+              <div className="flex flex-col items-end gap-2">
+                <Badge variant="outline" className="text-xs">
+                  {visitorProfile.name} is logged in
+                </Badge>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={prefillVisitorDetails}
+                  className="text-xs"
+                >
+                  <User className="w-3 h-3 mr-1" />
+                  Use Their Details
+                </Button>
+              </div>
+            )}
+          </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
