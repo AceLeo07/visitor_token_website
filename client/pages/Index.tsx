@@ -75,9 +75,9 @@ export default function Index() {
               <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mx-auto mb-4">
                 <UserCheck className="w-6 h-6 text-white" />
               </div>
-              <CardTitle className="text-xl">Easy Registration</CardTitle>
+              <CardTitle className="text-xl">Personal Account</CardTitle>
               <CardDescription>
-                Quick and simple visitor registration process with digital token generation
+                Create your visitor profile once and manage all your campus visits in one place
               </CardDescription>
             </CardHeader>
           </Card>
