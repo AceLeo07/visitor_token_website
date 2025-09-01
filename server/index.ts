@@ -53,6 +53,7 @@ export function createServer() {
 
   // Visitor Routes (Public)
   app.post("/api/visitor/register", registerVisitor);
+  app.post("/api/visitor/login", loginVisitorProfile);
 
   // Faculty Routes (Protected)
   app.get("/api/faculty/dashboard", authenticateToken, requireRole('faculty'), getFacultyDashboard);
