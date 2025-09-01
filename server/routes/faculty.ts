@@ -340,6 +340,12 @@ export const generateDirectToken: RequestHandler = async (req, res) => {
       generatedBy: 'faculty'
     });
 
+    // Link token to visitor profile if one exists
+    const visitorProfile = db.getVisitorProfileByEmail(visitorEmail.trim().toLowerCase());
+    if (visitorProfile) {
+      db.addTokenToVisitorProfile(visitorProfile.id, token.id);
+    }
+
     // Send token email
     const emailContent = generateApprovalEmail(token);
     sendEmail(visitorEmail, 'MIT ADT University - Visitor Token Generated', emailContent)
