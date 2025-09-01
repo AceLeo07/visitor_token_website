@@ -108,6 +108,8 @@ export default function VisitorRegister() {
     if (!formData.visitDate) errors.push("Visit date is required");
     if (!selectedDepartment) errors.push("Please select a department");
     if (!selectedFaculty) errors.push("Please select a faculty member");
+    if (!formData.password) errors.push("Password is required");
+    if (!formData.confirmPassword) errors.push("Please confirm your password");
     
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
