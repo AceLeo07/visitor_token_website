@@ -114,7 +114,7 @@ export default function VisitorLogin() {
             Welcome Back
           </h1>
           <p className="text-gray-600">
-            Enter your email and token code to view your access details
+            Sign in to your visitor account to manage your tokens and visits
           </p>
         </div>
 
