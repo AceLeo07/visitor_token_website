@@ -161,6 +161,12 @@ export const approveTokenRequest: RequestHandler = async (req, res) => {
       generatedBy: 'approval'
     });
 
+    // Link token to visitor profile if one exists
+    const visitorProfile = db.getVisitorProfileByEmail(request.visitor!.email);
+    if (visitorProfile) {
+      db.addTokenToVisitorProfile(visitorProfile.id, token.id);
+    }
+
     // Send approval email with token
     const emailContent = generateApprovalEmail(token);
     sendEmail(request.visitor!.email, 'MIT ADT University - Visitor Access Approved', emailContent)
