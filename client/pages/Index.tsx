@@ -114,15 +114,15 @@ export default function Index() {
               <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-105 transition-transform">
                 <User className="w-8 h-8 text-white" />
               </div>
-              <CardTitle className="text-lg">1. Register Your Visit</CardTitle>
+              <CardTitle className="text-lg">1. Create Your Account</CardTitle>
               <CardDescription className="text-sm">
-                Complete the visitor registration form with your details and visit purpose
+                Create your visitor profile and submit your first visit request
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
               <Link to="/visitor/register">
                 <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
-                  Start Registration
+                  Create Account
                 </Button>
               </Link>
             </CardContent>
@@ -150,15 +150,15 @@ export default function Index() {
               <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-105 transition-transform">
                 <CheckCircle className="w-8 h-8 text-white" />
               </div>
-              <CardTitle className="text-lg">3. Receive Token</CardTitle>
+              <CardTitle className="text-lg">3. Access Your Tokens</CardTitle>
               <CardDescription className="text-sm">
-                Get your digital access token via email and present at campus entrance
+                Login to your account to view all tokens and manage your campus visits
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
               <Link to="/visitor/login">
                 <Button className="w-full" variant="outline">
-                  Check Status
+                  Login to Account
                 </Button>
               </Link>
             </CardContent>
