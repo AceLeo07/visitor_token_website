@@ -56,6 +56,7 @@ export default function TokenGeneration() {
   const [generatedToken, setGeneratedToken] = useState<GeneratedToken | null>(null);
   const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>("");
+  const [visitorProfile, setVisitorProfile] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
