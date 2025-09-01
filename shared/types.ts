@@ -39,6 +39,20 @@ export interface Visitor {
   createdAt: Date;
 }
 
+export interface VisitorProfile {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  company?: string;
+  address: string;
+  password: string; // hashed password for login
+  tokens: string[]; // array of token IDs for this visitor
+  lastLoginAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface TokenRequest {
   id: string;
   visitorId: string;
