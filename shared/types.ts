@@ -167,9 +167,10 @@ export interface AuthResponse {
     id: string;
     name: string;
     email?: string;
-    username: string;
-    role: 'faculty' | 'admin' | 'security';
+    username?: string;
+    role: 'faculty' | 'admin' | 'security' | 'visitor';
     department?: Department;
+    profile?: VisitorProfile;
   };
   token: string;
   message: string;
