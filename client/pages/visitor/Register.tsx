@@ -123,12 +123,21 @@ export default function VisitorRegister() {
       errors.push("Phone number must be 10 digits");
     }
     
+    // Password validation
+    if (formData.password && formData.password.length < 6) {
+      errors.push("Password must be at least 6 characters long");
+    }
+
+    if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
+      errors.push("Passwords do not match");
+    }
+
     // Date validation
     const visitDate = new Date(formData.visitDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     visitDate.setHours(0, 0, 0, 0);
-    
+
     if (visitDate < today) {
       errors.push("Visit date cannot be in the past");
     }
