@@ -196,6 +196,66 @@ class Database {
     return this.visitors.find(v => v.id === id);
   }
 
+  // Visitor Profile operations
+  createVisitorProfile(profile: Omit<VisitorProfile, 'id' | 'createdAt' | 'updatedAt'>): VisitorProfile {
+    const newProfile: VisitorProfile = {
+      ...profile,
+      id: `vprof-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.visitorProfiles.push(newProfile);
+    return newProfile;
+  }
+
+  getVisitorProfileById(id: string): VisitorProfile | undefined {
+    return this.visitorProfiles.find(vp => vp.id === id);
+  }
+
+  getVisitorProfileByEmail(email: string): VisitorProfile | undefined {
+    return this.visitorProfiles.find(vp => vp.email.toLowerCase() === email.toLowerCase());
+  }
+
+  updateVisitorProfile(id: string, updates: Partial<VisitorProfile>): VisitorProfile | undefined {
+    const index = this.visitorProfiles.findIndex(vp => vp.id === id);
+    if (index !== -1) {
+      this.visitorProfiles[index] = {
+        ...this.visitorProfiles[index],
+        ...updates,
+        updatedAt: new Date()
+      };
+      return this.visitorProfiles[index];
+    }
+    return undefined;
+  }
+
+  addTokenToVisitorProfile(profileId: string, tokenId: string): VisitorProfile | undefined {
+    const profile = this.getVisitorProfileById(profileId);
+    if (profile) {
+      if (!profile.tokens.includes(tokenId)) {
+        profile.tokens.push(tokenId);
+        profile.updatedAt = new Date();
+      }
+      return profile;
+    }
+    return undefined;
+  }
+
+  getVisitorTokens(profileId: string): Token[] {
+    const profile = this.getVisitorProfileById(profileId);
+    if (profile) {
+      return this.tokens
+        .filter(t => profile.tokens.includes(t.id))
+        .map(t => ({
+          ...t,
+          visitor: this.getVisitorById(t.visitorId),
+          faculty: this.getFacultyById(t.facultyId),
+          request: t.requestId ? this.getTokenRequestById(t.requestId) : undefined
+        }));
+    }
+    return [];
+  }
+
   // Token Request operations
   createTokenRequest(request: Omit<TokenRequest, 'id' | 'createdAt'>): TokenRequest {
     const newRequest: TokenRequest = {
