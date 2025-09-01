@@ -29,6 +29,8 @@ export default function VisitorRegister() {
   const [selectedFaculty, setSelectedFaculty] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
