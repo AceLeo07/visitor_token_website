@@ -55,6 +55,9 @@ export function createServer() {
   app.post("/api/visitor/register", registerVisitor);
   app.post("/api/visitor/login", loginVisitorProfile);
 
+  // Token verification (Public for visitors, also used by security)
+  app.post("/api/security/verify", verifyToken);
+
   // Faculty Routes (Protected)
   app.get("/api/faculty/dashboard", authenticateToken, requireRole('faculty'), getFacultyDashboard);
   app.get("/api/faculty/requests", authenticateToken, requireRole('faculty'), getFacultyRequests);
