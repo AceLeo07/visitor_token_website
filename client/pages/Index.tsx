@@ -49,8 +49,8 @@ export default function Index() {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600"> Portal</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            Request campus access quickly and securely. Submit your visit request and receive
-            a digital token for seamless entry to MIT ADT University.
+            Create your visitor account and manage campus access easily. Submit visit requests,
+            track your tokens, and enjoy seamless entry to MIT ADT University.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/visitor/register">
