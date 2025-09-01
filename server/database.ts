@@ -6,6 +6,7 @@ class Database {
   private faculty: Faculty[] = [];
   private security: Security[] = [];
   private visitors: Visitor[] = [];
+  private visitorProfiles: VisitorProfile[] = [];
   private tokenRequests: TokenRequest[] = [];
   private tokens: Token[] = [];
   private securityLogs: SecurityLog[] = [];
