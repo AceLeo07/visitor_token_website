@@ -89,6 +89,15 @@ export const registerVisitor: RequestHandler = async (req, res) => {
       });
     }
 
+    // Check if visitor profile already exists
+    const existingProfile = db.getVisitorProfileByEmail(email);
+    if (existingProfile) {
+      return res.status(400).json({
+        success: false,
+        message: "A visitor profile already exists with this email address. Please login instead."
+      });
+    }
+
     // Validate visit date (must be today or future)
     const visitDateTime = new Date(visitDate);
     const today = new Date();
