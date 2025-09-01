@@ -121,6 +121,17 @@ export const registerVisitor: RequestHandler = async (req, res) => {
       purpose: purpose.trim()
     });
 
+    // Create visitor profile for login functionality
+    const visitorProfile = db.createVisitorProfile({
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
+      phone: phone.trim(),
+      company: company?.trim(),
+      address: address.trim(),
+      password: hashPassword(password),
+      tokens: []
+    });
+
     // Create token request
     const tokenRequest = db.createTokenRequest({
       visitorId: visitor.id,
