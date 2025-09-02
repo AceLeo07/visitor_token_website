@@ -51,8 +51,16 @@ const App = () => (
           {/* Security Portal Routes */}
           <Route path="/security" element={<SecurityPortal />} />
           <Route path="/security/login" element={<SecurityLogin />} />
-          <Route path="/security/scanner" element={<SecurityScanner />} />
-          <Route path="/security/dashboard" element={<SecurityScanner />} />
+          <Route path="/security/scanner" element={
+            <ProtectedRoute requiredRole="security">
+              <SecurityScanner />
+            </ProtectedRoute>
+          } />
+          <Route path="/security/dashboard" element={
+            <ProtectedRoute requiredRole="security">
+              <SecurityScanner />
+            </ProtectedRoute>
+          } />
 
           {/* Admin Portal Routes */}
           <Route path="/admin" element={<AdminPortal />} />
