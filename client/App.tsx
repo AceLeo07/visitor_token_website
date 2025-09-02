@@ -42,7 +42,11 @@ const App = () => (
           {/* Faculty Portal Routes */}
           <Route path="/faculty" element={<FacultyPortal />} />
           <Route path="/faculty/login" element={<FacultyLogin />} />
-          <Route path="/faculty/dashboard" element={<FacultyDashboard />} />
+          <Route path="/faculty/dashboard" element={
+            <ProtectedRoute requiredRole="faculty">
+              <FacultyDashboard />
+            </ProtectedRoute>
+          } />
 
           {/* Security Portal Routes */}
           <Route path="/security" element={<SecurityPortal />} />
