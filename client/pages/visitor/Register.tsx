@@ -94,7 +94,13 @@ export default function VisitorRegister() {
         body: JSON.stringify(formData)
       });
 
-      const data = await response.json();
+      const raw = await response.clone().text();
+      let data: any;
+      try {
+        data = JSON.parse(raw);
+      } catch {
+        data = { success: response.ok, message: raw || "Unexpected response" };
+      }
 
       if (data.success) {
         toast({
