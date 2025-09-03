@@ -2,23 +2,25 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  QrCode, 
-  User, 
-  Building, 
-  Calendar, 
-  Clock, 
+import {
+  QrCode,
+  User,
+  Building,
+  Calendar,
+  Clock,
   CheckCircle,
   AlertCircle,
   LogOut,
   Download,
   Mail,
-  Phone
+  Phone,
+  Plus
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/shared/Header";
 import Footer from "@/components/shared/Footer";
+import TokenRequest from "@/components/visitor/TokenRequest";
 
 interface VisitorProfile {
   id: string;
@@ -60,6 +62,7 @@ export default function VisitorDashboard() {
   const [visitorProfile, setVisitorProfile] = useState<VisitorProfile | null>(null);
   const [selectedToken, setSelectedToken] = useState<Token | null>(null);
   const [tokenStatuses, setTokenStatuses] = useState<{[key: string]: 'valid' | 'used' | 'expired'}>({});
+  const [showTokenRequest, setShowTokenRequest] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -132,6 +135,20 @@ export default function VisitorDashboard() {
       description: "You have been successfully logged out",
     });
     navigate("/visitor/login");
+  };
+
+  const handleTokenRequestSubmitted = () => {
+    // Hide the request form
+    setShowTokenRequest(false);
+
+    // Refresh the visitor profile to get updated data
+    const profileInfo = localStorage.getItem("visitor_profile");
+    if (profileInfo) {
+      const profile = JSON.parse(profileInfo);
+      // In a real app, you might want to refetch from server
+      // For now, we'll just update the UI state
+      setVisitorProfile(profile);
+    }
   };
 
   const downloadToken = () => {
@@ -214,19 +231,38 @@ Instructions:
         {/* Profile Overview */}
         <Card className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
           <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <User className="w-6 h-6 text-blue-600" />
-              <div>
-                <h3 className="font-semibold text-blue-800">
-                  Profile Overview
-                </h3>
-                <p className="text-sm text-blue-700">
-                  You have {visitorProfile.tokens?.length || 0} token(s) in your account
-                </p>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                <User className="w-6 h-6 text-blue-600" />
+                <div>
+                  <h3 className="font-semibold text-blue-800">
+                    Profile Overview
+                  </h3>
+                  <p className="text-sm text-blue-700">
+                    You have {visitorProfile.tokens?.length || 0} token(s) in your account
+                  </p>
+                </div>
               </div>
+              <Button
+                onClick={() => setShowTokenRequest(!showTokenRequest)}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                {showTokenRequest ? 'Cancel Request' : 'Request New Token'}
+              </Button>
             </div>
           </CardContent>
         </Card>
+
+        {/* Token Request Form */}
+        {showTokenRequest && (
+          <div className="mb-8">
+            <TokenRequest
+              visitorProfileId={visitorProfile.id}
+              onRequestSubmitted={handleTokenRequestSubmitted}
+            />
+          </div>
+        )}
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Profile Information */}
