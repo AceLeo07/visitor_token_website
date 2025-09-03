@@ -45,8 +45,10 @@ export default function TokenRequest({ visitorProfileId, onRequestSubmitted }: T
       try {
         setLoading(true);
         const response = await fetch("/api/auth/departments-faculty");
-        const data = await response.json();
-        
+        const raw = await response.clone().text();
+        let data: any;
+        try { data = JSON.parse(raw); } catch { data = { success: response.ok, message: raw }; }
+
         if (data.success) {
           setDepartments(data.departments);
         } else {
@@ -143,7 +145,9 @@ export default function TokenRequest({ visitorProfileId, onRequestSubmitted }: T
         })
       });
 
-      const data = await response.json();
+      const raw = await response.clone().text();
+      let data: any;
+      try { data = JSON.parse(raw); } catch { data = { success: response.ok, message: raw }; }
 
       if (data.success) {
         toast({
