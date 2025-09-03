@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Building } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import MitAdtLogo from "./MitAdtLogo";
 
 interface HeaderProps {
@@ -8,14 +9,23 @@ interface HeaderProps {
   backTo?: string;
   title?: string;
   subtitle?: string;
+  hideStaffButtons?: boolean;
 }
 
-export default function Header({ 
-  showBackButton = false, 
-  backTo = "/", 
+export default function Header({
+  showBackButton = false,
+  backTo = "/",
   title = "MIT ADT University",
-  subtitle = "Visitor Token System"
+  subtitle = "Visitor Token System",
+  hideStaffButtons = false
 }: HeaderProps) {
+  const [isVisitorLoggedIn, setIsVisitorLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Check if a visitor is logged in
+    const visitorProfile = localStorage.getItem("visitor_profile");
+    setIsVisitorLoggedIn(!!visitorProfile);
+  }, []);
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -36,15 +46,24 @@ export default function Header({
             </Link>
           ) : (
             <nav className="flex space-x-4">
-              <Link to="/visitor/login">
-                <Button variant="ghost" size="sm">Visitor Login</Button>
-              </Link>
-              <Link to="/faculty/login">
-                <Button variant="ghost" size="sm">Faculty Login</Button>
-              </Link>
-              <Link to="/admin/login">
-                <Button variant="outline" size="sm">Admin Portal</Button>
-              </Link>
+              {!hideStaffButtons && !isVisitorLoggedIn && (
+                <>
+                  <Link to="/visitor/login">
+                    <Button variant="ghost" size="sm">Visitor Login</Button>
+                  </Link>
+                  <Link to="/faculty/login">
+                    <Button variant="ghost" size="sm">Faculty Login</Button>
+                  </Link>
+                  <Link to="/admin/login">
+                    <Button variant="outline" size="sm">Admin Portal</Button>
+                  </Link>
+                </>
+              )}
+              {(hideStaffButtons || isVisitorLoggedIn) && (
+                <Link to="/visitor/login">
+                  <Button variant="ghost" size="sm">Visitor Login</Button>
+                </Link>
+              )}
             </nav>
           )}
         </div>
