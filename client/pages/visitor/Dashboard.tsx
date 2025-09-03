@@ -94,10 +94,10 @@ export default function VisitorDashboard() {
 
   const checkAllTokenStatuses = async (tokens: Token[]) => {
     const statuses: {[key: string]: 'valid' | 'used' | 'expired'} = {};
-    
+
     for (const token of tokens) {
       try {
-        const response = await fetch("/api/security/verify", {
+        const response = await fetch("/api/security/check-status", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -106,9 +106,11 @@ export default function VisitorDashboard() {
         });
 
         const data = await response.json();
-        
+
         if (data.success && data.valid) {
           statuses[token.id] = 'valid';
+        } else if (data.status) {
+          statuses[token.id] = data.status;
         } else if (data.message?.includes('used')) {
           statuses[token.id] = 'used';
         } else {
@@ -119,7 +121,7 @@ export default function VisitorDashboard() {
         statuses[token.id] = 'expired';
       }
     }
-    
+
     setTokenStatuses(statuses);
   };
 
