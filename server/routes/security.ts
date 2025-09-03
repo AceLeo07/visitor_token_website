@@ -368,3 +368,56 @@ export const bulkVerifyTokens: RequestHandler = async (req, res) => {
     });
   }
 };
+
+// Check Token Status (without marking as used) - for visitor dashboard
+export const checkTokenStatus: RequestHandler = async (req, res) => {
+  try {
+    const { tokenCode }: { tokenCode: string } = req.body;
+
+    if (!tokenCode) {
+      return res.status(400).json({
+        success: false,
+        valid: false,
+        message: "Token code is required"
+      });
+    }
+
+    // Find token by code
+    const token = db.getTokenByCode(tokenCode);
+
+    if (!token) {
+      return res.status(404).json({
+        success: false,
+        valid: false,
+        message: "Token not found"
+      });
+    }
+
+    // Check if token is valid (without marking as used)
+    const validationResult = isTokenValid(token);
+
+    if (!validationResult.valid) {
+      return res.status(200).json({
+        success: true,
+        valid: false,
+        message: validationResult.reason,
+        status: token.isUsed ? 'used' : 'expired'
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      valid: true,
+      message: "Token is valid and ready for use",
+      status: 'valid'
+    });
+
+  } catch (error) {
+    console.error('Token status check error:', error);
+    res.status(500).json({
+      success: false,
+      valid: false,
+      message: "Internal server error during status check"
+    });
+  }
+};
