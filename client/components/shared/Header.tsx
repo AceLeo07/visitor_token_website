@@ -59,11 +59,12 @@ export default function Header({
                   </Link>
                 </>
               )}
-              {(hideStaffButtons || isVisitorLoggedIn) && (
+              {hideStaffButtons && !isVisitorLoggedIn && (
                 <Link to="/visitor/login">
                   <Button variant="ghost" size="sm">Visitor Login</Button>
                 </Link>
               )}
+              {/* When visitor is logged in, show no login buttons */}
             </nav>
           )}
         </div>
