@@ -211,3 +211,114 @@ export const loginVisitorProfile: RequestHandler = async (req, res) => {
     });
   }
 };
+
+// Create Token Request (for logged-in visitors)
+export const createTokenRequest: RequestHandler = async (req, res) => {
+  try {
+    const {
+      visitorProfileId,
+      purpose,
+      departmentId,
+      facultyId,
+      visitDate
+    } = req.body;
+
+    // Validation
+    if (!visitorProfileId || !purpose || !departmentId || !facultyId || !visitDate) {
+      return res.status(400).json({
+        success: false,
+        message: "All required fields must be provided"
+      });
+    }
+
+    // Check if visitor profile exists
+    const visitorProfile = db.getVisitorProfileById(visitorProfileId);
+    if (!visitorProfile) {
+      return res.status(404).json({
+        success: false,
+        message: "Visitor profile not found"
+      });
+    }
+
+    // Check if department and faculty exist
+    const department = db.getDepartmentById(departmentId);
+    const faculty = db.getFacultyById(facultyId);
+
+    if (!department) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid department selected"
+      });
+    }
+
+    if (!faculty) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid faculty selected"
+      });
+    }
+
+    if (faculty.departmentId !== departmentId) {
+      return res.status(400).json({
+        success: false,
+        message: "Selected faculty does not belong to the selected department"
+      });
+    }
+
+    // Validate visit date (must be today or future)
+    const visitDateTime = new Date(visitDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    visitDateTime.setHours(0, 0, 0, 0);
+
+    if (visitDateTime < today) {
+      return res.status(400).json({
+        success: false,
+        message: "Visit date cannot be in the past"
+      });
+    }
+
+    // Create visitor record (for token request)
+    const visitor = db.createVisitor({
+      name: visitorProfile.name,
+      email: visitorProfile.email,
+      phone: visitorProfile.phone,
+      company: visitorProfile.company,
+      address: visitorProfile.address,
+      purpose: purpose.trim()
+    });
+
+    // Create token request
+    const tokenRequest = db.createTokenRequest({
+      visitorId: visitor.id,
+      facultyId,
+      departmentId,
+      purpose: purpose.trim(),
+      visitDate: visitDateTime,
+      status: 'pending'
+    });
+
+    // Send notification email to faculty using enhanced template
+    const facultyEmailContent = emailService.generateFacultyNotificationEmail(tokenRequest);
+    sendEmail(faculty.email!, `New Visitor Request - ${visitor.name}`, facultyEmailContent, 'faculty_notification')
+      .catch(error => console.error('Failed to send faculty notification:', error));
+
+    // Send confirmation email to visitor using enhanced template
+    const visitorEmailContent = emailService.generateVisitorConfirmationEmail(tokenRequest);
+    sendEmail(visitor.email, 'MIT ADT University - Token Request Submitted', visitorEmailContent, 'visitor_confirmation')
+      .catch(error => console.error('Failed to send visitor confirmation:', error));
+
+    res.status(201).json({
+      success: true,
+      message: "Token request submitted successfully. You will receive an email notification once reviewed.",
+      requestId: tokenRequest.id
+    });
+
+  } catch (error) {
+    console.error('Token request creation error:', error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error. Please try again later."
+    });
+  }
+};

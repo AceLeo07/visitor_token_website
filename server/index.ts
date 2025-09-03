@@ -6,7 +6,7 @@ import { authenticateToken, requireRole, requireAdmin } from "./auth";
 // Import route handlers
 import { handleDemo } from "./routes/demo";
 import { facultyLogin, securityLogin, getDepartmentsAndFaculty } from "./routes/auth";
-import { registerVisitor, loginVisitorProfile } from "./routes/visitor";
+import { registerVisitor, loginVisitorProfile, createTokenRequest } from "./routes/visitor";
 import {
   getFacultyDashboard,
   getFacultyRequests,
@@ -55,6 +55,9 @@ export function createServer() {
   // Visitor Routes (Public)
   app.post("/api/visitor/register", registerVisitor);
   app.post("/api/visitor/login", loginVisitorProfile);
+
+  // Visitor Token Request (for logged-in visitors)
+  app.post("/api/visitor/request-token", createTokenRequest);
 
   // Token verification (Public for visitors, also used by security)
   app.post("/api/security/verify", verifyToken);
