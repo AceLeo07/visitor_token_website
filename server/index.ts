@@ -27,7 +27,8 @@ import {
   verifyToken,
   getSecurityDashboard,
   getSecurityLogs,
-  bulkVerifyTokens
+  bulkVerifyTokens,
+  checkTokenStatus
 } from "./routes/security";
 
 export function createServer() {
