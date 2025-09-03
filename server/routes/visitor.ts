@@ -14,7 +14,7 @@ const verifyPassword = (password: string, hash: string): boolean => {
   return hashPassword(password) === hash;
 };
 
-// Visitor Registration and Token Request
+// Visitor Registration (Profile Creation Only)
 export const registerVisitor: RequestHandler = async (req, res) => {
   try {
     const {
@@ -23,15 +23,11 @@ export const registerVisitor: RequestHandler = async (req, res) => {
       phone,
       company,
       address,
-      purpose,
-      departmentId,
-      facultyId,
-      visitDate,
       password
-    }: VisitorRegistrationRequest & { password: string } = req.body;
+    } = req.body;
 
     // Validation
-    if (!name || !email || !phone || !address || !purpose || !departmentId || !facultyId || !visitDate || !password) {
+    if (!name || !email || !phone || !address || !password) {
       return res.status(400).json({
         success: false,
         message: "All required fields must be provided"
@@ -64,30 +60,7 @@ export const registerVisitor: RequestHandler = async (req, res) => {
       });
     }
 
-    // Check if department and faculty exist
-    const department = db.getDepartmentById(departmentId);
-    const faculty = db.getFacultyById(facultyId);
-
-    if (!department) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid department selected"
-      });
-    }
-
-    if (!faculty) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid faculty selected"
-      });
-    }
-
-    if (faculty.departmentId !== departmentId) {
-      return res.status(400).json({
-        success: false,
-        message: "Selected faculty does not belong to the selected department"
-      });
-    }
+    // Department and faculty validation removed - no longer needed for profile creation
 
     // Check if visitor profile already exists
     const existingProfile = db.getVisitorProfileByEmail(email);
@@ -97,29 +70,6 @@ export const registerVisitor: RequestHandler = async (req, res) => {
         message: "A visitor profile already exists with this email address. Please login instead."
       });
     }
-
-    // Validate visit date (must be today or future)
-    const visitDateTime = new Date(visitDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    visitDateTime.setHours(0, 0, 0, 0);
-
-    if (visitDateTime < today) {
-      return res.status(400).json({
-        success: false,
-        message: "Visit date cannot be in the past"
-      });
-    }
-
-    // Create visitor
-    const visitor = db.createVisitor({
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      phone: phone.trim(),
-      company: company?.trim(),
-      address: address.trim(),
-      purpose: purpose.trim()
-    });
 
     // Create visitor profile for login functionality
     const visitorProfile = db.createVisitorProfile({
@@ -132,30 +82,56 @@ export const registerVisitor: RequestHandler = async (req, res) => {
       tokens: []
     });
 
-    // Create token request
-    const tokenRequest = db.createTokenRequest({
-      visitorId: visitor.id,
-      facultyId,
-      departmentId,
-      purpose: purpose.trim(),
-      visitDate: visitDateTime,
-      status: 'pending'
-    });
+    // Send welcome email to visitor
+    const welcomeEmailContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Welcome to MIT ADT University Visitor Portal</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .header { background: linear-gradient(135deg, #2563eb, #4f46e5); color: white; padding: 20px; text-align: center; }
+          .content { padding: 30px; }
+          .footer { background: #f1f5f9; padding: 20px; text-align: center; font-size: 14px; color: #64748b; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>🎓 MIT ADT University</h1>
+          <h2>Welcome to Visitor Portal</h2>
+        </div>
 
-    // Send notification email to faculty using enhanced template
-    const facultyEmailContent = emailService.generateFacultyNotificationEmail(tokenRequest);
-    sendEmail(faculty.email!, `New Visitor Request - ${visitor.name}`, facultyEmailContent, 'faculty_notification')
-      .catch(error => console.error('Failed to send faculty notification:', error));
+        <div class="content">
+          <h3>Dear ${visitorProfile.name},</h3>
 
-    // Send confirmation email to visitor using enhanced template
-    const visitorEmailContent = emailService.generateVisitorConfirmationEmail(tokenRequest);
-    sendEmail(visitor.email, 'MIT ADT University - Visitor Request Submitted', visitorEmailContent, 'visitor_confirmation')
-      .catch(error => console.error('Failed to send visitor confirmation:', error));
+          <p>Welcome to MIT ADT University Visitor Portal! Your account has been created successfully.</p>
+
+          <p><strong>Next Steps:</strong></p>
+          <ul>
+            <li>Login to your account to request campus access tokens</li>
+            <li>Submit visit requests with faculty approval</li>
+            <li>Track your token status and visit history</li>
+          </ul>
+
+          <p>You can now login to your account and request campus access tokens as needed.</p>
+        </div>
+
+        <div class="footer">
+          <p>© 2024 MIT ADT University. All rights reserved.</p>
+          <p>This is an automated message. Please do not reply to this email.</p>
+        </div>
+      </body>
+      </html>
+    `;
+
+    sendEmail(visitorProfile.email, 'MIT ADT University - Welcome to Visitor Portal', welcomeEmailContent, 'welcome')
+      .catch(error => console.error('Failed to send welcome email:', error));
 
     res.status(201).json({
       success: true,
-      message: "Visitor request submitted successfully. You will receive an email notification once reviewed.",
-      requestId: tokenRequest.id
+      message: "Account created successfully! Please login to request campus access tokens.",
+      profileId: visitorProfile.id
     });
 
   } catch (error) {
