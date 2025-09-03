@@ -211,7 +211,13 @@ export default function SecurityScanner() {
         })
       });
 
-      const data = await response.json();
+      const raw = await response.clone().text();
+      let data: VerificationResult;
+      try {
+        data = JSON.parse(raw);
+      } catch {
+        data = { success: response.ok, valid: false, message: raw || "Unexpected response" } as VerificationResult;
+      }
       setVerificationResult(data);
 
       if (data.valid) {
@@ -235,7 +241,7 @@ export default function SecurityScanner() {
       console.error("Verification error:", error);
       toast({
         title: "Network Error",
-        description: "Failed to verify token. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to verify token. Please try again.",
         variant: "destructive"
       });
     } finally {
