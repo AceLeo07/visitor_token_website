@@ -12,9 +12,7 @@ import VisitorLogin from "./pages/visitor/Login";
 import VisitorDashboard from "./pages/visitor/Dashboard";
 import FacultyLogin from "./pages/faculty/Login";
 import FacultyDashboard from "./pages/faculty/Dashboard";
-import SecurityLogin from "./pages/security/Login";
-import SecurityScanner from "./pages/security/Scanner";
-import SecurityDashboard from "./pages/security/Dashboard";
+import SecurityApp from "./pages/security/App";
 import AdminLogin from "./pages/admin/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 
@@ -44,24 +42,9 @@ const App = () => (
             }
           />
 
-          {/* Security Routes */}
-          <Route path="/security/login" element={<SecurityLogin />} />
-          <Route
-            path="/security/scanner"
-            element={
-              <ProtectedRoute requiredRole="security">
-                <SecurityScanner />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/security/dashboard"
-            element={
-              <ProtectedRoute requiredRole="security">
-                <SecurityDashboard />
-              </ProtectedRoute>
-            }
-          />
+          {/* Consolidated Security Portal */}
+          <Route path="/security" element={<SecurityApp />} />
+          <Route path="/security/*" element={<SecurityApp />} />
 
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
