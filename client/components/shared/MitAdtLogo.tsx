@@ -14,7 +14,7 @@ export default function MitAdtLogo({ className = "", size = 'md' }: MitAdtLogoPr
   return (
     <div className={`${sizeClasses[size]} ${className}`}>
       <img
-        src="https://cdn.builder.io/api/v1/image/assets%2F29f7579e8879465c816ad21e64876b85%2Ffb19798581ae4e9b9e7b750c745877d0?format=webp&width=800"
+        src="https://cdn.builder.io/api/v1/image/assets%2F29f7579e8879465c816ad21e64876b85%2F4bdc935c5b384e688c42fce8fe14959a?format=webp&width=800"
         alt="MIT ADT University Logo"
         className="w-full h-full object-contain"
       />
