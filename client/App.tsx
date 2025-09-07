@@ -7,20 +7,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
-import Index from "./pages/Index";
-import StaffPortals from "./pages/StaffPortals";
-import NotFound from "./pages/NotFound";
-import NotFoundPortal from "./pages/NotFoundPortal";
 import VisitorRegister from "./pages/visitor/Register";
 import VisitorLogin from "./pages/visitor/Login";
 import VisitorDashboard from "./pages/visitor/Dashboard";
-import FacultyPortal from "./pages/FacultyPortal";
 import FacultyLogin from "./pages/faculty/Login";
 import FacultyDashboard from "./pages/faculty/Dashboard";
-import SecurityPortal from "./pages/SecurityPortal";
 import SecurityLogin from "./pages/security/Login";
 import SecurityScanner from "./pages/security/Scanner";
-import AdminPortal from "./pages/AdminPortal";
+import SecurityDashboard from "./pages/security/Dashboard";
 import AdminLogin from "./pages/admin/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 
@@ -33,45 +27,55 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/staff" element={<StaffPortals />} />
+          {/* Public/Visitor routes */}
+          <Route path="/" element={<VisitorLogin />} />
           <Route path="/visitor/register" element={<VisitorRegister />} />
           <Route path="/visitor/login" element={<VisitorLogin />} />
           <Route path="/visitor/dashboard" element={<VisitorDashboard />} />
 
-          {/* Faculty Portal Routes */}
-          <Route path="/faculty" element={<FacultyPortal />} />
+          {/* Faculty Routes */}
           <Route path="/faculty/login" element={<FacultyLogin />} />
-          <Route path="/faculty/dashboard" element={
-            <ProtectedRoute requiredRole="faculty">
-              <FacultyDashboard />
-            </ProtectedRoute>
-          } />
+          <Route
+            path="/faculty/dashboard"
+            element={
+              <ProtectedRoute requiredRole="faculty">
+                <FacultyDashboard />
+              </ProtectedRoute>
+            }
+          />
 
-          {/* Security Portal Routes */}
-          <Route path="/security" element={<SecurityPortal />} />
+          {/* Security Routes */}
           <Route path="/security/login" element={<SecurityLogin />} />
-          <Route path="/security/scanner" element={
-            <ProtectedRoute requiredRole="security">
-              <SecurityScanner />
-            </ProtectedRoute>
-          } />
-          <Route path="/security/dashboard" element={
-            <ProtectedRoute requiredRole="security">
-              <SecurityScanner />
-            </ProtectedRoute>
-          } />
+          <Route
+            path="/security/scanner"
+            element={
+              <ProtectedRoute requiredRole="security">
+                <SecurityScanner />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/security/dashboard"
+            element={
+              <ProtectedRoute requiredRole="security">
+                <SecurityDashboard />
+              </ProtectedRoute>
+            }
+          />
 
-          {/* Admin Portal Routes */}
-          <Route path="/admin" element={<AdminPortal />} />
+          {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={
-            <ProtectedRoute requiredRole="admin">
-              <AdminDashboard />
-            </ProtectedRoute>
-          } />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFoundPortal />} />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Fallback */}
+          <Route path="*" element={<VisitorLogin />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
