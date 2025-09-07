@@ -65,7 +65,13 @@ export default function VisitorLogin() {
         })
       });
 
-      const data = await response.json();
+      const raw = await response.clone().text();
+      let data: any;
+      try {
+        data = JSON.parse(raw);
+      } catch {
+        data = { success: response.ok, message: raw || "Unexpected response" };
+      }
 
       if (data.success) {
         toast({
@@ -93,7 +99,7 @@ export default function VisitorLogin() {
       console.error("Login error:", error);
       toast({
         title: "Network Error",
-        description: "Unable to verify token. Please try again.",
+        description: "Unable to sign in. Please try again.",
         variant: "destructive"
       });
     } finally {
